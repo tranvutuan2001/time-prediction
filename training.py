@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVR
@@ -64,4 +66,14 @@ def train(algo, x_train: pd.DataFrame, y_train: pd.Series, C, epsilon) -> Pipeli
 def test(predictor: Pipeline, x_test: pd.DataFrame, y_test: pd.Series):
     y_pred = predictor.predict(x_test)
     y_test = y_test.to_numpy()
-    return mean_absolute_percentage_error(y_test, y_pred)
+    return [mean_absolute_percentage_error(y_test, y_pred), root_mean_square_error(y_test, y_pred)]
+
+
+def root_mean_square_error(y_test, y_pred):
+    n = len(y_test)
+    sum = 0
+    for i in range(len(y_test)):
+        e = math.pow((y_test[i] - y_pred[i]) / y_test[i], 2)
+        sum += e
+    sq = math.sqrt(sum / n)
+    return sq
