@@ -24,14 +24,19 @@ def build_incomplete_dataframe(complete_event_log: log_instance.EventLog):
         return convert_data_to_dataframe_SVR_TS(data, states)
 
 
-def one_complete_trace_to_many_incomplete_traces(complete_trace: log_instance.Trace, require_complete: bool = True) -> [log_instance.Trace]:
+def one_complete_trace_to_many_incomplete_traces(complete_trace: log_instance.Trace) -> [log_instance.Trace]:
     end_activities = config.end_activities
+    remove_incomplete = config.remove_in_complete
+    require_complete = config.require_complete
     trace_name: str = complete_trace.attributes['concept:name']
     res = []
     last_activity = complete_trace[-1]
-    is_last_activity_completed = last_activity['lifecycle:transition']
+    is_last_activity_completed = True
 
-    if (last_activity['concept:name'] not in end_activities) or (require_complete and not is_last_activity_completed):
+    if 'lifecycle:transition' in last_activity:
+        is_last_activity_completed = last_activity['lifecycle:transition'] == 'complete'
+
+    if (last_activity['concept:name'] not in end_activities and remove_incomplete) or (require_complete and not is_last_activity_completed):
         return res
 
     for i, current_activity in enumerate(complete_trace):
@@ -40,7 +45,7 @@ def one_complete_trace_to_many_incomplete_traces(complete_trace: log_instance.Tr
         end_time_stamp = last_activity['time:timestamp']
         remaining_time = end_time_stamp - current_activity['time:timestamp']
         res.append((
-            log_instance.Trace(complete_trace[0:i], attributes={'concept:name': trace_name + '-tuan-' + str(i)}),
+            log_instance.Trace(complete_trace[0:i+1], attributes={'concept:name': trace_name + '-tuan-' + str(i)}),
             remaining_time
         ))
     return res
@@ -81,7 +86,6 @@ def jaccard_similarity_multiset(bag_a: dict, bag_b: dict):
     return intersection / total_element
 
 
-# Calculates the normalized Levenshtein distance of 2 strings
 def levenshtein(s1: [str], s2: [str]):
     l1 = len(s1)
     l2 = len(s2)

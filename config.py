@@ -1,6 +1,8 @@
 # General Config
 log_to_use = 'credit'
 algo_to_use = 'SVR_TS'
+remove_in_complete = False
+require_complete = False
 
 # Transition System Config
 ts_window = 3  # positive int
@@ -30,7 +32,7 @@ def get_attributes_config():
     res['category_columns'] = ['concept:name', 'lifecycle:transition', 'org:resource']
     res['descriptive_attributes'] = ['lifecycle:transition', 'concept:name', 'org:resource']
     res['target_attribute'] = 'remaining_time'
-    res['end_activities'] = ['End']
+    res['end_activities'] = ['End', 'Marking Paid Invoices']
 
     if algo_to_use == 'SVR_TS':
         res['descriptive_attributes'] = []
