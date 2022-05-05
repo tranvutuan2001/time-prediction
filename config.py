@@ -22,6 +22,12 @@ def get_file_config():
             res['csv_path'] = './credit.csv'
         else:
             res['csv_path'] = f'./credit-svr-ts-{ts_view}-{ts_window}.csv'
+    elif log_to_use == 'document':
+        res['xes_path'] = './document.xes'
+        if algo_to_use == 'SVR':
+            res['csv_path'] = './document.csv'
+        else:
+            res['csv_path'] = f'./document-svr-ts-{ts_view}-{ts_window}.csv'
     return res
 
 

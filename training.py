@@ -48,13 +48,13 @@ def prepare_df(df: pd.DataFrame, descriptive_attributes: [str], target_attribute
     df.dropna(inplace=True)
     df[target_attribute] = pd.to_timedelta(df[target_attribute]).dt.seconds
     df = df.drop(df[df[target_attribute] < 100].index)
-    df = df.sample(frac=0.05, random_state=42)
+    # df = df.sample(frac=0.05, random_state=42)
     y = df[target_attribute]
     if len(descriptive_attributes) == 0:
         x = pd.get_dummies(df, columns=category_columns, drop_first=True)
     else:
         x = pd.get_dummies(df[descriptive_attributes], columns=category_columns, drop_first=True)
-    return train_test_split(x, y, test_size=0.2, random_state=42)
+    return train_test_split(x, y, test_size=0.97, random_state=42)
 
 
 def train(algo, x_train: pd.DataFrame, y_train: pd.Series, C, epsilon) -> Pipeline:
